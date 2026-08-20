@@ -1,0 +1,50 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_lines = 0;
+int count_words = 0;
+int count_chars = 0;
+%}
+
+/* Option to avoid linking with -lfl or implementing yywrap */
+%option noyywrap
+
+%%
+
+\n          { count_lines++; count_chars++; }
+[^\t\n ]+   { count_words++; count_chars += yyleng; }
+.           { count_chars++; }
+
+%%
+
+int main(int argc, char *argv[]) {
+    // Check if a filename is passed as an argument
+    if (argc > 1) {
+        FILE *file = fopen(argv[1], "r");
+        if (!file) {
+            fprintf(stderr, "Error: Could not open file %s\n", argv[1]);
+            return 1;
+        }
+        // Direct the lexer to read from the file instead of stdin
+        yyin = file;
+    } else {
+        printf("No file provided. Enter text (Press Ctrl+D to finish):\n");
+    }
+
+    // Start lexical analysis
+    yylex();
+
+    // If text was processed but didn't end with a newline, account for the final line
+    if (count_chars > 0 && count_lines == 0) {
+        count_lines = 1;
+    }
+
+    // Print final results
+    printf("\n--- Results ---\n");
+    printf("Lines:      %d\n", count_lines);
+    printf("Words:      %d\n", count_words);
+    printf("Characters: %d\n", count_chars);
+
+    return 0;
+}
