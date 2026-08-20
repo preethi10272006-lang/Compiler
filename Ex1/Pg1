@@ -1,0 +1,44 @@
+%{
+#include<stdio.h>
+#include<string.h>
+%}
+
+%%
+"SELECT"|"FROM"|"WHERE"|"GROUP"|"BY" {
+    printf("Keyword:%s\n", yytext);
+}
+
+"="|">"|"<"|"LIKE" {
+    printf("Operator:%s\n", yytext);
+}
+
+","|";" {
+    printf("Symbol:%s\n", yytext);
+}
+
+[a-zA-Z_][a-zA-Z0-9_]* {
+    printf("Identifier:%s\n", yytext);
+}
+
+[0-9]+ {
+    printf("Number:%s\n", yytext);
+}
+
+[ \t\n]+ {
+    /* Whitespaces matrixum Newlines ah ignore panna ethuvum print panna vendam */
+}
+
+. {
+    printf("Unknown Character:%s\n", yytext);
+}
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    printf("Enter SQL Query:\n");
+    yylex();
+    return 0;
+}
