@@ -1,0 +1,35 @@
+%{
+#include<stdio.h>
+#include<string.h>
+%}
+
+%%
+[a-zA-Z]+ {
+    int len = strlen(yytext);
+    int i;
+    for(i = 0; i < len; i++) {
+        char c = yytext[i];
+        if(c >= 'A' && c <= 'Z') {
+            c = ((c - 'A' + 3) % 26) + 'A';
+        }
+        else if(c >= 'a' && c <= 'z') {
+            c = ((c - 'a' + 3) % 26) + 'a';
+        }
+        printf("%c", c);
+    }
+}
+
+.|\n {
+    printf("%s", yytext);
+}
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    printf("Enter Text:\n");
+    yylex();
+    return 0;
+}
