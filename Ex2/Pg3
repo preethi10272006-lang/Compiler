@@ -1,0 +1,29 @@
+%{
+#include <stdio.h>
+%}
+
+%x INC_HEADER
+
+%%
+
+"#include" { printf("PREPROCESSOR : %s\n", yytext); BEGIN(INC_HEADER); }
+<INC_HEADER>[ \t]+ { /* Ignore spaces after #include */ }
+<INC_HEADER>\"[^\"]*\" { printf("HEADER FILENAME (left context: after #include) : %s\n", yytext); BEGIN(INITIAL); }
+
+"char *"|"char" { printf("DATA TYPE : %s\n", yytext); }
+"=" { printf("OPERATOR : %s\n", yytext); }
+\"[^\"]*\" { printf("STRING LITERAL : %s\n", yytext); }
+[a-zA-Z_][a-zA-Z0-9_]* { printf("IDENTIFIER : %s\n", yytext); }
+";" { printf("PUNCTUATION : %s\n", yytext); }
+[ \t\n]+ { /* Ignore whitespace */ }
+
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    yylex();
+    return 0;
+}
