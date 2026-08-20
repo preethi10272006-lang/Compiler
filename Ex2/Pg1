@@ -1,0 +1,54 @@
+%{
+#include <stdio.h>
+#include <string.h>
+
+int str_count = 0;
+int char_count = 0;
+char strings[100][100];
+char chars[100][10];
+%}
+
+%%
+
+\"[^\"]*\" {
+    strcpy(strings[str_count], yytext);
+    str_count++;
+}
+
+'[^']' {
+    strcpy(chars[char_count], yytext);
+    char_count++;
+}
+
+.|\n { /* Ignore other characters */ }
+
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    // 1. Variable 'i' ah loop ku munnadiye inga declare panniyachu
+    int i;
+
+    yylex();
+
+    printf("String literals : %d\t(", str_count);
+    // 2. Inga வெறும் 'i=0' mattum than irukku (int i illa)
+    for(i = 0; i < str_count; i++) {
+        printf("%s", strings[i]);
+        if(i < str_count - 1) printf(", ");
+    }
+    printf(")\n");
+
+    printf("Character literals : %d\t(", char_count);
+    // 3. Inga thirumba 'int i' podama athe 'i' variable ah reuse pannikrom
+    for(i = 0; i < char_count; i++) {
+        printf("%s", chars[i]);
+        if(i < char_count - 1) printf(", ");
+    }
+    printf(")\n");
+
+    return 0;
+}
