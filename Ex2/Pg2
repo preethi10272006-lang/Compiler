@@ -1,0 +1,28 @@
+%{
+#include <stdio.h>
+%}
+
+%%
+
+"while" { printf("KEYWORD : %s\n", yytext); }
+"count"|"done" { printf("IDENTIFIER : %s\n", yytext); }
+[0-9]+ { printf("INT CONSTANT : %s\n", yytext); }
+"<=" { printf("RELATIONAL OP : %s\n", yytext); }
+"&&"|"!" { printf("LOGICAL OP : %s\n", yytext); }
+"++" { printf("INCREMENT OP : %s\n", yytext); }
+"("|")"|"{"|"}"|";" { printf("PUNCTUATION : %s\n", yytext); }
+[ \t\n]+ { /* Ignore whitespace */ }
+. { printf("UNKNOWN : %s\n", yytext); }
+
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    // Terminal blank-ah irukama irukka intha guide line
+    printf("Enter your code input (Press Enter, then Ctrl+D or Ctrl+Z to see output):\n\n");
+    yylex();
+    return 0;
+}
